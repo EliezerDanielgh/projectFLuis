@@ -1,0 +1,48 @@
+<ion-card-content>
+    <ion-refresher slot="fixed" (ionRefresh)="refresh({},$event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <ion-grid>
+        <ion-row>
+            <ion-col size="12" style="text-align: center;" *ngIf="cargando">
+                <ion-spinner name="bubbles"></ion-spinner>
+                <h3>Por Favor Espere...</h3>
+            </ion-col>
+        </ion-row>
+        <ion-row *ngIf="!cargando">
+            <ion-col *ngFor="let element of data; let i=index" size-xs="12" size-md="6" size-lg="4" size-xl="3">
+                <ion-card>
+                    <ion-card-header *ngFor="let column of getColumnsTitle(); let i=index">
+                        <ion-card-title *ngIf="column?.title">{{element[column.attribute]}}</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <span *ngFor="let column of columns">
+                            <p >
+                                <span *ngIf="!(column?.title) && !(column?.template)">
+                                    <b>{{column.header}}: </b> {{
+                                    (column?.type === 'date')?
+                                    getRealValue(element,column.attribute).split('T')[0]:
+                                    (column?.type==='bool')?
+                                    siNo(getRealValue(element,column.attribute)):
+                                    getRealValue(element,column.attribute)
+    
+                                    }}
+                                </span>
+                            </p>
+                            <span *ngIf="column.template" [ngTemplateOutlet]="templates[column.template]"
+                                [ngTemplateOutletContext]="{column: column, i:i, item: element}"></span>
+                        </span>
+                        
+                        <!-- <ion-button *ngIf="btnAdd" (click)="onEdit(element)" fill="clear" shape="round">
+                            <ion-icon name="create-outline"></ion-icon> Editar
+                        </ion-button>
+                        <ion-button *ngIf="btnDelete" (click)="onEdit(element)" fill="clear" shape="round"
+                            color="danger">
+                            <ion-icon name="trash-outline"></ion-icon> Eliminar
+                        </ion-button> -->
+                    </ion-card-content>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-card-content>
